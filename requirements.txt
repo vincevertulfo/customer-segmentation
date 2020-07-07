@@ -1,0 +1,7 @@
+matplotlib==3.1.2
+seaborn==0.10.0
+squarify==0.4.3
+pandas==1.0.3
+numpy==1.18.4
+yellowbrick==1.1
+scikit_learn==0.23.1
