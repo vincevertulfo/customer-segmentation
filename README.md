@@ -14,6 +14,7 @@ And so, this mini-project is focused on segmenting customers based on their purc
 
 ## Important Files
 - **rfm.py** - This is the actual RFM script.
+- **clustering_utilites.py** - This is for utility functions for the clustering
 - **sample-usage.ipynb** - Here's a sample jupyter notebook showing a sample usage of the script.
 
 ## Sample Usage
