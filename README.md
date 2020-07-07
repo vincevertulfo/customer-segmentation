@@ -13,8 +13,8 @@ E-commerce has been producing unicorns across the globe for the past five years.
 And so, this mini-project is focused on segmenting customers based on their purchase pattern using the RFM (Recency-Frequence-Monetary) framework. We developed a script also for reusability for future e-commerce projects that may come about.
 
 ## Important Files
-- rfm.py - Here's the actual RFM script.
-- sample-usage.ipynb - Here, we're showing you a sample usage of our script.
+- **rfm.py** - This is the actual RFM script.
+- **sample-usage.ipynb** - Here's a sample jupyter notebook showing a sample usage of the script.
 
 ## Sample Usage
 

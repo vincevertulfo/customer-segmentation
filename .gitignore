@@ -4,4 +4,5 @@ __pycache__/
 */.ipynb_checkpoints/*
 
 
-# Testing Script
+# Initial Notebook
+customer-segmentation.ipynb
