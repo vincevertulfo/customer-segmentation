@@ -14,4 +14,6 @@ def find_optimal_k(model, k_fold, X):
   visualizer = KElbowVisualizer(model, k=(2,k_fold))
   visualizer.fit(X)
 
+  print(f"Using the elbow method, the optimal number of k: {visualizer.elbow_value_}")
+
   return visualizer.elbow_value_

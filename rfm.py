@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime, date, timedelta
-from clustering_utilities import *
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+from clustering_utilities import *
 
 class RFM:
 
@@ -17,12 +18,10 @@ class RFM:
 
         Parameters:
             df (df): The raw user transaction dataframe.
-            cols (dict) : {"customer_id": colname, "invoice_date": colname, "invoice_id": colname, "cost": colname}
-            ## TODO: add reference date format
+            rfm_column_names (dict) : {"customer_id": colname, "invoice_date": colname, "invoice_id": colname, "cost": colname, "tenure" (optional) :  colname}
             reference_date (date): The date you want to reference from for the RFM metrics.
                                    You can put a specific reference date in this string format "YYYY/MM/DD"
                                    or use "DAYAFTER" which stands for day after last invoice date
-            tenure (str): Name of the tenure column if it exists
 
         Returns:
             DataFrame
@@ -30,12 +29,20 @@ class RFM:
 
         self.df = df
 
-        customer_id = rfm_column_names["customer_id"]
-        invoice_date = rfm_column_names["invoice_date"]
-        invoice_id = rfm_column_names["invoice_id"]
-        cost = rfm_column_names["cost"]
+        if "tenure" in rfm_column_names.keys():
+            customer_id = rfm_column_names["customer_id"]
+            invoice_date = rfm_column_names["invoice_date"]
+            invoice_id = rfm_column_names["invoice_id"]
+            cost = rfm_column_names["cost"]
+            tenure = rfm_column_names["tenure"]
+        else:
+            customer_id = rfm_column_names["customer_id"]
+            invoice_date = rfm_column_names["invoice_date"]
+            invoice_id = rfm_column_names["invoice_id"]
+            cost = rfm_column_names["cost"]
 
-        self.df[invoice_date]=pd.to_datetime(self.df[invoice_date])
+
+        self.df[invoice_date] = pd.to_datetime(self.df[invoice_date])
 
 
         if reference_date == "DAYAFTER":
@@ -43,7 +50,8 @@ class RFM:
         else:
             reference_date = datetime.strptime(reference_date, "%Y/%M/%d")
         
-        self.df = self.df[self.df[invoice_date]<reference_date]
+        self.df = self.df[self.df[invoice_date] < reference_date]
+
 
         rfm_df = self.df.groupby(customer_id).agg({
             invoice_date : lambda x: (reference_date - x.max()).days,
@@ -57,7 +65,8 @@ class RFM:
 
         self.rfm_df =rfm_df
 
-    def dist_plot_rfm(self):
+
+    def plot(self):
         '''
         Returns Distribution plot for each RFM metrics
 
@@ -74,12 +83,12 @@ class RFM:
         sns.distplot(self.rfm_df['Monetary'])
         plt.show()
 
-    def rfm_scores(self):
+    def apply_score(self):
         '''
-            Returns RFM table with RFM Score columns
+        Returns RFM table with RFM Score columns
 
-            Returns:
-                DataFrame with additional columns for rfm scores
+        Returns:
+            DataFrame with additional columns for rfm scores
         '''
         rfm_score_df = self.rfm_df
         rfm_score_df['r_score'] = pd.qcut(rfm_score_df['Recency'], 4, ['1', '2', '3', '4'])
@@ -91,12 +100,12 @@ class RFM:
 
         return rfm_score_df
 
-    def rfm_kmeans_clustering(self, scale = True, no_of_cluster= "OPTIMIZE"):
+    def cluster(self, scale = True, no_of_cluster= "OPTIMIZE"):
         '''
-            Returns RFM table with its cluster
+        Returns RFM table with its cluster
 
-            Returns:
-                DataFrame with additional columns for clusters
+        Returns:
+            DataFrame with additional columns for clusters
         '''
         rfm_df=self.rfm_df
 
@@ -122,16 +131,12 @@ class RFM:
 
         return clustered_rfm_df
 
-    def rfm_cluster_summary(self):
+    def cluster_summary(self):
         '''
         Returns RFM table that is grouped by according to col showing the mean/average of the RFM metrics
 
-        Parameters:
-            rfm_df (df): RFM DataFrame
-            col (string): Column to use for groupby. Ideally, this is the cluster name column
-
         Returns:
-            DataFrame grouped by cluster name showing th mean/average of the RFM metrics
+            DataFrame grouped by cluster name showing the mean/average of the RFM metrics
         '''  
 
         cluster_summary = self.clustered_rfm_df.groupby("clusters").agg({
